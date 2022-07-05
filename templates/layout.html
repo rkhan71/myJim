@@ -16,22 +16,33 @@
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Features</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Pricing</a>
-                  </li>
-                </ul>
-                <ul class="navbar-nav ms-auto">
+                {% if session["user_id"] %}
+                  <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                      <a class="nav-link active" aria-current="page" href="/register">Logout</a>
+                      <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
-                </ul>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">Features</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">Pricing</a>
+                    </li>
+                  </ul>
+                  <ul class="navbar-nav ms-auto">
+                      <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/logout">Logout</a>
+                      </li>
+                  </ul>
+                {% else %}
+                  <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" href="/register">Register</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" href="/login">Login</a>
+                    </li>
+                  </ul>
+                {% endif %}
               </div>
             </div>
           </nav>
