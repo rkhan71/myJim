@@ -1,4 +1,3 @@
-from email import message
 from flask import Flask, render_template, redirect, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -67,3 +66,27 @@ def login():
 def logout():
     session.clear()
     return redirect("/")
+
+@app.route("/diary", methods=["GET", "POST"])
+def diary():
+    if request.method == "POST":
+        if request.form.get("exercise"):
+            exercise = request.form.get("exercise")
+            connect = sqlite3.connect("myJim.db")
+            cursor = connect.cursor()
+            cursor.execute("INSERT INTO exercise_list VALUES (?, ?)", (session["user_id"], exercise))
+            connect.commit()
+            connect.close()
+            return render_template("diary.html")
+        else:
+            return render_template("error.html", message="Required field not filled out.")
+    else:
+        url = request.url
+        temp = url.split("?")
+        if len(temp) > 1:
+            date = temp[1].split("=")
+            session["date"] = date[1]
+            return render_template("diary.html")
+        else:
+            return render_template("diary.html")
+
