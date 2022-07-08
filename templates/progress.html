@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block body %} 
+    <p>Looks like I've made no progress here, lol.</p>
+    <script>
+        let element = document.querySelector("#progress")
+        element.classList.add("active")
+        element.setAttribute("aria-current", "page")
+    </script>
+{% endblock %}

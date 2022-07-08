@@ -83,6 +83,12 @@ def diary():
             connect.close()
             return render_template("diary.html", exercises=exercises, entries=entries)
         elif request.form.get("exercise-select"):
+            if not request.form.get("weight"):
+                return render_template("error.html", message="Required field not filled out.")
+            if not request.form.get("units"):
+                return render_template("error.html", message="Required field not filled out.")
+            if not request.form.get("reps"):
+                return render_template("error.html", message="Required field not filled out.")
             exercise = request.form.get("exercise-select")
             weight = request.form.get("weight")
             units = request.form.get("units")
@@ -125,4 +131,8 @@ def diary():
             return render_template("diary.html", exercises=exercises, entries=entries)
         else:
             return render_template("diary.html")
+
+@app.route("/progress")
+def progress():
+    return render_template("progress.html")
 
