@@ -75,18 +75,54 @@ def diary():
             connect = sqlite3.connect("myJim.db")
             cursor = connect.cursor()
             cursor.execute("INSERT INTO exercise_list VALUES (?, ?)", (session["user_id"], exercise))
+            cursor.execute("SELECT * FROM exercise_list WHERE user_id = ?", (session["user_id"],))
+            exercises = cursor.fetchall()
+            cursor.execute("SELECT * FROM diary WHERE user_id = ? AND day = ?", (session["user_id"], session["date"]))
+            entries = cursor.fetchall()
             connect.commit()
             connect.close()
-            return render_template("diary.html")
+            return render_template("diary.html", exercises=exercises, entries=entries)
+        elif request.form.get("exercise-select"):
+            exercise = request.form.get("exercise-select")
+            weight = request.form.get("weight")
+            units = request.form.get("units")
+            reps = request.form.get("reps")
+            connect = sqlite3.connect("myJim.db")
+            cursor = connect.cursor()
+            data = (session["user_id"], exercise, weight, units, reps, session["date"])
+            cursor.execute("INSERT INTO diary VALUES (?, ?, ?, ?, ?, ?)", data)
+            cursor.execute("SELECT * FROM exercise_list WHERE user_id = ?", (session["user_id"],))
+            exercises = cursor.fetchall()
+            cursor.execute("SELECT * FROM diary WHERE user_id = ? AND day = ?", (session["user_id"], session["date"]))
+            entries = cursor.fetchall()
+            connect.commit()
+            connect.close()
+            return render_template("diary.html", exercises=exercises, entries=entries)
         else:
             return render_template("error.html", message="Required field not filled out.")
-    else:
+    else: 
         url = request.url
         temp = url.split("?")
         if len(temp) > 1:
             date = temp[1].split("=")
             session["date"] = date[1]
-            return render_template("diary.html")
+            connect = sqlite3.connect("myJim.db")
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM exercise_list WHERE user_id = ?", (session["user_id"],))
+            exercises = cursor.fetchall()
+            cursor.execute("SELECT * FROM diary WHERE user_id = ? AND day = ?", (session["user_id"], session["date"]))
+            entries = cursor.fetchall()
+            connect.close()
+            return render_template("diary.html", exercises=exercises, entries=entries)
+        elif session["date"]:
+            connect = sqlite3.connect("myJim.db")
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM exercise_list WHERE user_id = ?", (session["user_id"],))
+            exercises = cursor.fetchall()
+            cursor.execute("SELECT * FROM diary WHERE user_id = ? AND day = ?", (session["user_id"], session["date"]))
+            entries = cursor.fetchall()
+            connect.close()
+            return render_template("diary.html", exercises=exercises, entries=entries)
         else:
             return render_template("diary.html")
 

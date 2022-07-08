@@ -32,19 +32,53 @@
 <div class="container mb-3">
     <form action="/diary" method="post">
         <div class="mb-3">
-            <input type="text" name="exercise" class="form-control-lg" placeholder="Exercise">
+            <select class="form-select" aria-label="Default select example" name="exercise-select">
+                <option selected>Exercise</option>
+                {% for e in exercises %}
+                <option value="{{ e[1] }}">{{ e[1] }}</option>
+                {% endfor %}
+            </select>
         </div>
         <div class="mb-3">
             <input type="text" name="weight" class="form-control-lg" placeholder="Weight">
         </div>
         <div class="mb-3">
-            <input type="text" name="units" class="form-control-lg" placeholder="Units">
+            <select class="form-select" aria-label="Default select example" name="units">
+                <option selected>Units</option>
+                <option value="kg">kg</option>
+                <option value="lbs">lbs</option>
+              </select>
         </div>
         <div class="mb-3">
             <input type="text" name="reps" class="form-control-lg" placeholder="Reps">
         </div>
         <button type="submit" class="btn btn-primary btn-lg">Add Entry</button>
     </form>
+</div>
+<div class="container py-3">
+    <h3>Today's Entries</h3>
+</div>
+<div class="container mb-3">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Exercise</th>
+                <th scope="col">Weight</th>
+                <th scope="col">Units</th>
+                <th scope="col">Reps</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            <tr>
+                <td>{{ entry[1] }}</td>
+                <td>{{ entry[2] }}</td>
+                <td>{{ entry[3] }}</td>
+                <td>{{ entry[4] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endif %}
 {% endblock %}
