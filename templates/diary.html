@@ -33,7 +33,7 @@
     <form action="/diary" method="post">
         <div class="mb-3">
             <select class="form-select" aria-label="Default select example" name="exercise-del">
-                <option selected>Exercise</option>
+                <option selected disabled>--- Choose an Exercise ---</option>
                 {% for e in exercises %}
                 <option value="{{ e[1] }}">{{ e[1] }}</option>
                 {% endfor %}
@@ -49,7 +49,7 @@
     <form action="/diary" method="post">
         <div class="mb-3">
             <select class="form-select" aria-label="Default select example" name="exercise-select">
-                <option selected>Exercise</option>
+                <option selected disabled>--- Choose an Exercise ---</option>
                 {% for e in exercises %}
                 <option value="{{ e[1] }}">{{ e[1] }}</option>
                 {% endfor %}
@@ -60,7 +60,7 @@
         </div>
         <div class="mb-3">
             <select class="form-select" aria-label="Default select example" name="units">
-                <option selected>Units</option>
+                <option selected disabled>--- Pick a Unit ---</option>
                 <option value="kg">kg</option>
                 <option value="lbs">lbs</option>
               </select>
