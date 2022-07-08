@@ -80,5 +80,10 @@
         </tbody>
     </table>
 </div>
+<script>
+    let element = document.querySelector("#diary")
+    element.classList.add("active")
+    element.setAttribute("aria-current", "page")
+</script>
 {% endif %}
 {% endblock %}
