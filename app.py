@@ -118,6 +118,17 @@ def diary():
             connect.commit()
             connect.close()
             return render_template("diary.html", exercises=exercises, entries=entries)
+        elif request.form.get("exercise-del"):
+            connect = sqlite3.connect("myJim.db")
+            cursor = connect.cursor()
+            cursor.execute("DELETE FROM exercise_list WHERE exercise = ?", (request.form.get("exercise-del"),))
+            cursor.execute("SELECT * FROM exercise_list WHERE user_id = ?", (session["user_id"],))
+            exercises = cursor.fetchall()
+            cursor.execute("SELECT * FROM diary WHERE user_id = ? AND day = ?", (session["user_id"], session["date"]))
+            entries = cursor.fetchall()
+            connect.commit()
+            connect.close()
+            return render_template("diary.html", exercises=exercises, entries=entries)
         else:
             return render_template("error.html", message="Required field not filled out.")
     else: 
