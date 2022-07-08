@@ -50,6 +50,9 @@
               </select>
         </div>
         <div class="mb-3">
+            <input type="text" name="sets" class="form-control-lg" placeholder="Sets">
+        </div>
+        <div class="mb-3">
             <input type="text" name="reps" class="form-control-lg" placeholder="Reps">
         </div>
         <button type="submit" class="btn btn-primary btn-lg">Add Entry</button>
@@ -65,16 +68,25 @@
                 <th scope="col">Exercise</th>
                 <th scope="col">Weight</th>
                 <th scope="col">Units</th>
+                <th scope="col">Sets</th>
                 <th scope="col">Reps</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
             {% for entry in entries %}
             <tr>
-                <td>{{ entry[1] }}</td>
                 <td>{{ entry[2] }}</td>
                 <td>{{ entry[3] }}</td>
                 <td>{{ entry[4] }}</td>
+                <td>{{ entry[5] }}</td>
+                <td>{{ entry[6] }}</td>
+                <td>
+                    <form action="/diary" method="post">
+                        <input type="hidden" name="id" value="{{ entry[0] }}">
+                        <button type="submit" class="btn btn-link">Delete</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
