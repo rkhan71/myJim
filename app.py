@@ -96,6 +96,14 @@ def diary():
             units = request.form.get("units")
             sets = request.form.get("sets")
             reps = request.form.get("reps")
+            try:
+                weight = int(weight)
+                sets = int(sets)
+                reps = int(reps)
+            except:
+                return render_template("error.html", message="Invalid entry.")
+            if units not in ["kg", "lbs"]:
+                return render_template("error.html", message="Invalid entry.")
             connect = sqlite3.connect("myJim.db")
             cursor = connect.cursor()
             data = (session["user_id"], exercise, weight, units, sets, reps, session["date"])
@@ -145,7 +153,7 @@ def diary():
             entries = cursor.fetchall()
             connect.close()
             return render_template("diary.html", exercises=exercises, entries=entries)
-        elif session["date"]:
+        elif "date" in session.keys():
             connect = sqlite3.connect("myJim.db")
             cursor = connect.cursor()
             cursor.execute("SELECT * FROM exercise_list WHERE user_id = ?", (session["user_id"],))
