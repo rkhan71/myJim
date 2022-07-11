@@ -1,6 +1,10 @@
+<!-- Extending layout.html template so that everything there is included in this page -->
 {% extends "layout.html" %}
 
+{% block title %}: Diary{% endblock %}
+
 {% block body %}
+<!-- Form to change session["date"] using get method-->
 <div class="container mb-3">
     <form action="/diary" method="get">
         <div class="mb-3">
@@ -11,10 +15,13 @@
         </div>
     </form>
 </div>
-{% if session["date"] %}
+
+<!-- Show the selected date -->
 <div class="container py-3">
     <h3>{{ session["date"] }}</h3>
 </div>
+
+<!-- Forms to update database -->
 <div class="container mb-3">
     <h3>Add an Exercise</h3>
 </div>
@@ -34,6 +41,7 @@
         <div class="mb-3">
             <select class="form-select" aria-label="Default select example" name="exercise-del">
                 <option selected disabled>--- Choose an Exercise ---</option>
+                <!-- exercises variable passed in from app.py, SQL query for all exercises for current user-->
                 {% for e in exercises %}
                 <option value="{{ e[1] }}">{{ e[1] }}</option>
                 {% endfor %}
@@ -77,6 +85,8 @@
 <div class="container py-3">
     <h3>Today's Entries</h3>
 </div>
+
+<!-- Table to show users diary entries for selected date -->
 <div class="container mb-3">
     <table class="table table-striped">
         <thead>
@@ -90,6 +100,7 @@
             </tr>
         </thead>
         <tbody>
+            <!-- entries variable passed in from app.py -->
             {% for entry in entries %}
             <tr>
                 <td>{{ entry[2] }}</td>
@@ -108,10 +119,12 @@
         </tbody>
     </table>
 </div>
+
+<!-- Some javascript to add classes and attributes to elements in the navbar in layout.html so that the user can see 
+    the page they are on -->
 <script>
     let element = document.querySelector("#diary")
     element.classList.add("active")
     element.setAttribute("aria-current", "page")
 </script>
-{% endif %}
 {% endblock %}

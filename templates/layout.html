@@ -1,6 +1,9 @@
+<!-- Template that every other template will extend so that everything here is standardized across all webpages
+and doesn't have to be copy pasted -->
 <!DOCTYPE html>
 
 <html lang="en">
+    <!-- Adding bootstap, the CSS stylesheet, and some code to make sure the web app is responsive -->
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,6 +12,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     </head>
     <body>
+      <!-- A navbar at the top of every page -->
         <nav class="navbar navbar-expand-lg bg-light">
             <div class="container-fluid">
               <a class="navbar-brand" href="/">myJim</a>
@@ -16,6 +20,7 @@
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Different navbar when user is logged in and therefore session["user_id"] exists -->
                 {% if session["user_id"] %}
                   <ul class="navbar-nav me-auto">
                     <li class="nav-item">
@@ -49,6 +54,7 @@
           <main class="container-fluid py-5 text-center">
             {% block body %}{% endblock %}
           </main>
+        <!-- more bootstrap stuff -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
     </body>
 </html>
