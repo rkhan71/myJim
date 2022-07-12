@@ -192,27 +192,38 @@ def progress():
 # Creating the graph that shows the users progress and making it a path so that when it's reloaded the new data shows up
 @app.route("/graph.png")
 def make_png():
-    fig = make_graph()
+    # use make_graphs function to create a figure with all the users progress graphs and let the html template access this figure
+    # as a png image with the source "/graph.png"
+    fig = make_graphs()
     output = io.BytesIO()
     FigureCanvas(fig).print_png(output)
     return Response(output.getvalue(), mimetype="image/png")
 
-def make_graph():
-    # Get all of user exercises and create graph for each one
+def make_graphs():
+    # Get all of the users exercises and create graph for each one
     connect = sqlite3.connect("myJim.db")
     cursor = connect.cursor()
     cursor.execute("SELECT * FROM exercise_list WHERE user_id = ?", (session["user_id"],))
     exercises = cursor.fetchall()
+
+    # Creating a figure that will fit all the graphs the user needs (one for each exercise)
+    fig, ax = plt.subplots(len(exercises), 1)
+    i = 0
     for exercise in exercises:
-        fig, ax = plt.subplots()
+        # Get data for graph
         cursor.execute("SELECT * FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (session["user_id"], exercise[1]))
         entries = cursor.fetchall()
         y = []
         for entry in entries:
             y += [entry[3] * entry[5] * entry[6]]
         x = range(len(y))
-        ax.plot(x, y, color="red", marker="x", markerfacecolor="blue")
-        connect.close()
-        return fig
+
+        # Put graph in a position in the figure
+        ax[i].plot(x, y, color="red", marker="x", markeredgecolor="blue")
+        i += 1
+    
+    # Returning finished figure with all the graphs in it
+    connect.close()
+    return fig
 
 
