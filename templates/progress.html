@@ -3,7 +3,12 @@
 {% block title %}: Progress{% endblock %}
 
 {% block body %} 
-    <p>Looks like I've made no progress here, lol.</p>
+    <div class="container mb-3">
+        <h3>Graph</h3>
+    </div>
+    <div class="container mb-3">
+        <img src="/graph.png">
+    </div>
     <script>
         let element = document.querySelector("#progress")
         element.classList.add("active")

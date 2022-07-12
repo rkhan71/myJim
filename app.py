@@ -1,8 +1,14 @@
-from flask import Flask, render_template, redirect, request, session
+from flask import Flask, render_template, redirect, request, session, Response
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
 from datetime import date
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import io
 
 app = Flask(__name__)
 
@@ -178,7 +184,35 @@ def diary():
     connect.close()
     return render_template("diary.html", exercises=exercises, entries=entries)
 
-# Page for users to see their progress over longer periods of time in a graphical manner
+# Page where graph showing users progress is shown
 @app.route("/progress")
 def progress():
     return render_template("progress.html")
+
+# Creating the graph that shows the users progress and making it a path so that when it's reloaded the new data shows up
+@app.route("/graph.png")
+def make_png():
+    fig = make_graph()
+    output = io.BytesIO()
+    FigureCanvas(fig).print_png(output)
+    return Response(output.getvalue(), mimetype="image/png")
+
+def make_graph():
+    # Get all of user exercises and create graph for each one
+    connect = sqlite3.connect("myJim.db")
+    cursor = connect.cursor()
+    cursor.execute("SELECT * FROM exercise_list WHERE user_id = ?", (session["user_id"],))
+    exercises = cursor.fetchall()
+    for exercise in exercises:
+        fig, ax = plt.subplots()
+        cursor.execute("SELECT * FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (session["user_id"], exercise[1]))
+        entries = cursor.fetchall()
+        y = []
+        for entry in entries:
+            y += [entry[3] * entry[5] * entry[6]]
+        x = range(len(y))
+        ax.plot(x, y, color="red", marker="x", markerfacecolor="blue")
+        connect.close()
+        return fig
+
+
