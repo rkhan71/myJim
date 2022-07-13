@@ -203,7 +203,7 @@ def make_graphs():
     exercises = cursor.fetchall()
 
     # Creating a figure that will fit all the graphs the user needs (one for each exercise)
-    fig, ax = plt.subplots(len(exercises), 1)
+    fig, ax = plt.subplots(len(exercises), 1, figsize=(6.4, len(exercises) * 4.8))
     i = 0
     for exercise in exercises:
         # Get data for graph
@@ -216,9 +216,12 @@ def make_graphs():
 
         # Put graph in a position in the figure
         ax[i].plot(x, y, color="red", marker="x", markeredgecolor="blue")
+        ax[i].set_title(exercise[1])
+        ax[i].set_ylabel("Weight * Total Reps")
         i += 1
     
     # Returning finished figure with all the graphs in it
+    fig.tight_layout(h_pad=5)
     connect.close()
     return fig
 
