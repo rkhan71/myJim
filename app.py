@@ -126,18 +126,14 @@ def diary():
                 return render_template("error.html", message="Required field not filled out.")
             if not request.form.get("reps"):
                 return render_template("error.html", message="Required field not filled out.")
-            if not request.form.get("sets"):
-                return render_template("error.html", message="Required field not filled out.")
             exercise = request.form.get("exercise-select")
             weight = request.form.get("weight")
             units = request.form.get("units")
-            sets = request.form.get("sets")
             reps = request.form.get("reps")
 
             # Making sure that responses are in correct data types
             try:
                 weight = int(weight)
-                sets = int(sets)
                 reps = int(reps)
             except:
                 return render_template("error.html", message="Invalid entry.")
@@ -145,8 +141,8 @@ def diary():
                 return render_template("error.html", message="Invalid entry.")
             
             # Adding data entry to database and updating diary entries for current user
-            data = (session["user_id"], exercise, weight, units, sets, reps, session["date"])
-            cursor.execute("INSERT INTO diary (user_id, exercise, weight, units, sets, reps, day) VALUES (?, ?, ?, ?, ?, ?, ?)", data)
+            data = (session["user_id"], exercise, weight, units, reps, session["date"])
+            cursor.execute("INSERT INTO diary (user_id, exercise, weight, units, reps, day) VALUES (?, ?, ?, ?, ?, ?)", data)
             cursor.execute("SELECT * FROM diary WHERE user_id = ? AND day = ?", (session["user_id"], session["date"]))
             entries = cursor.fetchall()
         elif request.form.get("id"):
@@ -215,7 +211,7 @@ def make_graphs():
         entries = cursor.fetchall()
         y = []
         for entry in entries:
-            y += [entry[3] * entry[5] * entry[6]]
+            y += [entry[3] * entry[5]]
         x = range(len(y))
 
         # Put graph in a position in the figure
