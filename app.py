@@ -9,6 +9,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import io
+from functools import wraps
 
 app = Flask(__name__)
 
@@ -17,6 +18,15 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
+# Decorator that doesn't let users access certain pages if they aren't logged in
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:
+            return redirect("/")
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Home page
 @app.route("/")
@@ -90,6 +100,7 @@ def login():
 
 # Logout route
 @app.route("/logout")
+@login_required
 def logout():
     # Logging out is simply clearing the information from the current session
     session.clear()
@@ -97,6 +108,7 @@ def logout():
 
 # Page for users to add data to the database
 @app.route("/diary", methods=["GET", "POST"])
+@login_required
 def diary():
     # Connect to sql database and get the exercises and diary entries that the current user has for the selected date 
     # so that they can be shown on the webpage
@@ -182,6 +194,7 @@ def diary():
 
 # Page where graph showing users progress is shown
 @app.route("/progress")
+@login_required
 def progress():
     return render_template("progress.html")
 
