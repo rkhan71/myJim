@@ -1,10 +1,10 @@
 from flask import Flask, render_template, redirect, request, session, Response
 from flask_session import Session
+from numpy import empty
 from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
 from datetime import date
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -206,18 +206,31 @@ def make_graphs():
     fig, ax = plt.subplots(len(exercises), 1, figsize=(6.4, len(exercises) * 4.8))
     i = 0
     for exercise in exercises:
+        # Get the first day
+        cursor.execute("SELECT day FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (session["user_id"], exercise[1]))
+        day1 = cursor.fetchone()
+        if not day1:
+            fig.delaxes(ax[i])
+            i += 1 
+            continue
+        day1 = day1[0]
+
         # Get data for graph
         cursor.execute("SELECT * FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (session["user_id"], exercise[1]))
         entries = cursor.fetchall()
         y = []
         for entry in entries:
             y += [entry[3] * entry[5]]
-        x = range(len(y))
+        cursor.execute("SELECT JULIANDAY(day) - JULIANDAY(?) FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (day1, session["user_id"], exercise[1]))
+        diffs = cursor.fetchall()
+        x = [int(j[0]) for j in diffs]
 
         # Put graph in a position in the figure
         ax[i].plot(x, y, color="red", marker="x", markeredgecolor="blue")
         ax[i].set_title(exercise[1])
         ax[i].set_ylabel("Weight * Total Reps")
+        ax[i].set_xlabel(f"Days Since {day1}")
+
         i += 1
     
     # Returning finished figure with all the graphs in it
