@@ -200,12 +200,12 @@ def progress():
     cursor = connect.cursor()
     cursor.execute("SELECT * FROM exercise_list WHERE user_id = ?", (session["user_id"],))
     exercises = cursor.fetchall()
+    connect.close()
+    ids = range(len(exercises))
     if request.method == "POST":
         # Get list of exercises user wants graphs for
         session["graph"] = request.form.getlist("exercise")
-        print(session["graph"])
-    connect.close()
-    return render_template("progress.html", exercises=exercises)
+    return render_template("progress.html", exercises=exercises, ids=ids)
 
 # Creating the graph that shows the users progress and making it a path so that when it's reloaded the new data shows up
 @app.route("/graph.png")
@@ -230,14 +230,8 @@ def make_graphs():
         # Get the first day
         cursor.execute("SELECT day FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (session["user_id"], exercise))
         day1 = cursor.fetchone()
-        if not day1:
-            if l > 1:
-                fig.delaxes(ax[i])
-            else:
-                fig.delaxes(ax)
-            i += 1 
-            continue
-        day1 = day1[0]
+        if day1:
+            day1 = day1[0]
 
         # Get data for graph
         cursor.execute("SELECT * FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (session["user_id"], exercise))

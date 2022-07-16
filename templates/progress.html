@@ -6,16 +6,27 @@
     <div class="container mb-3">
         <h3>Progress Graphs</h3>
     </div>
-    <div class="container mb-3">
-        <form action="/progress" method="post">
-            {% for e in exercises %}
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="exercise" value="{{ e[1] }}">
-                <label class="form-check-label">{{ e[1] }}</label>
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    Choose Which Graphs to Show
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <form action="/progress" method="post">
+                        {% for e in exercises %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="exercise" id="{{ id }}" value="{{ e[1] }}">
+                            <label class="form-check-label">{{ e[1] }}</label>
+                        </div>
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary">Enter</button>
+                    </form>
+                </div>
             </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-primary">Enter</button>
-        </form>
+        </div>
     </div>
     {% if session["graph"] %}
     <img src="/graph.png">
