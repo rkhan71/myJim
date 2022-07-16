@@ -6,12 +6,9 @@
 {% block body %}
 <!-- Form to change session["date"] using get method-->
 <div class="container mb-3">
-    <form action="/diary" method="get">
+    <form action="/diary" method="get" id="calendar">
         <div class="mb-3">
             <input type="date" name="date" class="form-control">
-        </div>
-        <div class="mb-3">
-            <button type="submit" class="btn btn-primary">Enter</button>
         </div>
     </form>
 </div>
@@ -121,5 +118,9 @@
     let element = document.querySelector("#diary")
     element.classList.add("active")
     element.setAttribute("aria-current", "page")
+    let form = document.getElementById("calendar")
+    form.addEventListener("change", function onchange() {
+        form.submit();
+    });
 </script>
 {% endblock %}

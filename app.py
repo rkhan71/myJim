@@ -209,7 +209,6 @@ def progress():
         for d in data:
             ind = exercises.index(d)
             session["graph"] += [(ind, d)]
-        print(session["graph"])
     return render_template("progress.html", exercises=exercises)
 
 # Creating the graph that shows the users progress and making it a path so that when it's reloaded the new data shows up

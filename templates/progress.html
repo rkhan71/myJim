@@ -9,20 +9,19 @@
     <div class="accordion" id="accordionExample">
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingOne">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                     Choose Which Graphs to Show
                 </button>
             </h2>
-            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
-                    <form action="/progress" method="post">
+                    <form action="/progress" method="post" id="graph-form">
                         {% for e in exercises %}
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="exercise" id="{{ loop.index0 }}" value="{{ e }}">
                             <label class="form-check-label">{{ e }}</label>
                         </div>
                         {% endfor %}
-                        <button type="submit" class="btn btn-primary">Enter</button>
                     </form>
                 </div>
             </div>
@@ -40,5 +39,9 @@
         let element = document.querySelector("#progress")
         element.classList.add("active")
         element.setAttribute("aria-current", "page")
+        let form = document.getElementById("graph-form")
+        form.addEventListener("change", function onchange() {
+            form.submit();
+        });
     </script>
 {% endblock %}
