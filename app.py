@@ -201,11 +201,16 @@ def progress():
     cursor.execute("SELECT * FROM exercise_list WHERE user_id = ?", (session["user_id"],))
     exercises = cursor.fetchall()
     connect.close()
-    ids = range(len(exercises))
+    exercises = [i[1] for i in exercises]
     if request.method == "POST":
         # Get list of exercises user wants graphs for
-        session["graph"] = request.form.getlist("exercise")
-    return render_template("progress.html", exercises=exercises, ids=ids)
+        data = request.form.getlist("exercise")
+        session["graph"] = []
+        for d in data:
+            ind = exercises.index(d)
+            session["graph"] += [(ind, d)]
+        print(session["graph"])
+    return render_template("progress.html", exercises=exercises)
 
 # Creating the graph that shows the users progress and making it a path so that when it's reloaded the new data shows up
 @app.route("/graph.png")
@@ -228,30 +233,30 @@ def make_graphs():
     i = 0
     for exercise in session["graph"]:
         # Get the first day
-        cursor.execute("SELECT day FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (session["user_id"], exercise))
+        cursor.execute("SELECT day FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (session["user_id"], exercise[1]))
         day1 = cursor.fetchone()
         if day1:
             day1 = day1[0]
 
         # Get data for graph
-        cursor.execute("SELECT * FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (session["user_id"], exercise))
+        cursor.execute("SELECT * FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (session["user_id"], exercise[1]))
         entries = cursor.fetchall()
         y = []
         for entry in entries:
             y += [entry[3] * entry[5]]
-        cursor.execute("SELECT JULIANDAY(day) - JULIANDAY(?) FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (day1, session["user_id"], exercise))
+        cursor.execute("SELECT JULIANDAY(day) - JULIANDAY(?) FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (day1, session["user_id"], exercise[1]))
         diffs = cursor.fetchall()
         x = [int(j[0]) for j in diffs]
 
         # Put graph in a position in the figure
         if l > 1:
             ax[i].plot(x, y, color="red", marker="x", markeredgecolor="blue")
-            ax[i].set_title(exercise)
+            ax[i].set_title(exercise[1])
             ax[i].set_ylabel("Weight * Total Reps")
             ax[i].set_xlabel(f"Days Since {day1}")
         else:
             ax.plot(x, y, color="red", marker="x", markeredgecolor="blue")
-            ax.set_title(exercise)
+            ax.set_title(exercise[1])
             ax.set_ylabel("Weight * Total Reps")
             ax.set_xlabel(f"Days Since {day1}")
 
