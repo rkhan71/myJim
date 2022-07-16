@@ -1,6 +1,5 @@
 from flask import Flask, render_template, redirect, request, session, Response
 from flask_session import Session
-from numpy import empty
 from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
 from datetime import date
@@ -145,8 +144,8 @@ def diary():
 
             # Making sure that responses are in correct data types
             try:
-                weight = int(weight)
-                reps = int(reps)
+                weight = float(weight)
+                reps = float(reps)
             except:
                 return render_template("error.html", message="Invalid entry.")
             if units not in ["kg", "lbs"]:
@@ -192,11 +191,21 @@ def diary():
     connect.close()
     return render_template("diary.html", exercises=exercises, entries=entries)
 
-# Page where graph showing users progress is shown
-@app.route("/progress")
+# Page where graphs showing users progress is shown
+@app.route("/progress", methods=["GET", "POST"])
 @login_required
 def progress():
-    return render_template("progress.html")
+    # Get all users exercises to create form so users can choose which graphs to show
+    connect = sqlite3.connect("myJim.db")
+    cursor = connect.cursor()
+    cursor.execute("SELECT * FROM exercise_list WHERE user_id = ?", (session["user_id"],))
+    exercises = cursor.fetchall()
+    if request.method == "POST":
+        # Get list of exercises user wants graphs for
+        session["graph"] = request.form.getlist("exercise")
+        print(session["graph"])
+    connect.close()
+    return render_template("progress.html", exercises=exercises)
 
 # Creating the graph that shows the users progress and making it a path so that when it's reloaded the new data shows up
 @app.route("/graph.png")
@@ -209,40 +218,48 @@ def make_png():
     return Response(output.getvalue(), mimetype="image/png")
 
 def make_graphs():
-    # Get all of the users exercises and create graph for each one
+    # Connect to database
     connect = sqlite3.connect("myJim.db")
     cursor = connect.cursor()
-    cursor.execute("SELECT * FROM exercise_list WHERE user_id = ?", (session["user_id"],))
-    exercises = cursor.fetchall()
 
     # Creating a figure that will fit all the graphs the user needs (one for each exercise)
-    fig, ax = plt.subplots(len(exercises), 1, figsize=(6.4, len(exercises) * 4.8))
+    l = len(session["graph"])
+    fig, ax = plt.subplots(l, 1, figsize=(6.4, l * 4.8))
     i = 0
-    for exercise in exercises:
+    for exercise in session["graph"]:
         # Get the first day
-        cursor.execute("SELECT day FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (session["user_id"], exercise[1]))
+        cursor.execute("SELECT day FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (session["user_id"], exercise))
         day1 = cursor.fetchone()
         if not day1:
-            fig.delaxes(ax[i])
+            if l > 1:
+                fig.delaxes(ax[i])
+            else:
+                fig.delaxes(ax)
             i += 1 
             continue
         day1 = day1[0]
 
         # Get data for graph
-        cursor.execute("SELECT * FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (session["user_id"], exercise[1]))
+        cursor.execute("SELECT * FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (session["user_id"], exercise))
         entries = cursor.fetchall()
         y = []
         for entry in entries:
             y += [entry[3] * entry[5]]
-        cursor.execute("SELECT JULIANDAY(day) - JULIANDAY(?) FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (day1, session["user_id"], exercise[1]))
+        cursor.execute("SELECT JULIANDAY(day) - JULIANDAY(?) FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (day1, session["user_id"], exercise))
         diffs = cursor.fetchall()
         x = [int(j[0]) for j in diffs]
 
         # Put graph in a position in the figure
-        ax[i].plot(x, y, color="red", marker="x", markeredgecolor="blue")
-        ax[i].set_title(exercise[1])
-        ax[i].set_ylabel("Weight * Total Reps")
-        ax[i].set_xlabel(f"Days Since {day1}")
+        if l > 1:
+            ax[i].plot(x, y, color="red", marker="x", markeredgecolor="blue")
+            ax[i].set_title(exercise)
+            ax[i].set_ylabel("Weight * Total Reps")
+            ax[i].set_xlabel(f"Days Since {day1}")
+        else:
+            ax.plot(x, y, color="red", marker="x", markeredgecolor="blue")
+            ax.set_title(exercise)
+            ax.set_ylabel("Weight * Total Reps")
+            ax.set_xlabel(f"Days Since {day1}")
 
         i += 1
     

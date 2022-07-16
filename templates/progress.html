@@ -6,7 +6,20 @@
     <div class="container mb-3">
         <h3>Progress Graphs</h3>
     </div>
+    <div class="container mb-3">
+        <form action="/progress" method="post">
+            {% for e in exercises %}
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="exercise" value="{{ e[1] }}">
+                <label class="form-check-label">{{ e[1] }}</label>
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Enter</button>
+        </form>
+    </div>
+    {% if session["graph"] %}
     <img src="/graph.png">
+    {% endif %}
     <script>
         let element = document.querySelector("#progress")
         element.classList.add("active")
