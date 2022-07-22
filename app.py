@@ -86,9 +86,10 @@ def login():
         if not userdata or not check_password_hash(userdata[2], request.form.get("password")):
             return render_template("error.html", message="Invalid username and/or password.")
         
-        # Storing the user_id and the current date in the session dictionary
+        # Storing the user_id, current date, and default unit in the session dictionary
         session["user_id"] = userdata[0]
         session["date"] = date.today().strftime("%Y-%m-%d")
+        session["unit"] = "kg"
 
         connect.close()
 
@@ -198,17 +199,20 @@ def progress():
     # Get all users exercises to create form so users can choose which graphs to show
     connect = sqlite3.connect("myJim.db")
     cursor = connect.cursor()
-    cursor.execute("SELECT * FROM exercise_list WHERE user_id = ?", (session["user_id"],))
+    cursor.execute("SELECT * FROM exercise_list WHERE user_id = ? ORDER BY exercise", (session["user_id"],))
     exercises = cursor.fetchall()
     connect.close()
     exercises = [i[1] for i in exercises]
     if request.method == "POST":
-        # Get list of exercises user wants graphs for
-        data = request.form.getlist("exercise")
-        session["graph"] = []
-        for d in data:
-            ind = exercises.index(d)
-            session["graph"] += [(ind, d)]
+        if request.form.get("unit"):
+            session["unit"] = request.form.get("unit")
+        else:
+            # Get list of exercises user wants graphs for
+            data = request.form.getlist("exercise")
+            session["graph"] = []
+            for d in data:
+                ind = exercises.index(d)
+                session["graph"] += [(ind, d)]
     return render_template("progress.html", exercises=exercises)
 
 # Creating the graph that shows the users progress and making it a path so that when it's reloaded the new data shows up
@@ -230,8 +234,15 @@ def make_graphs():
     l = len(session["graph"])
     fig, ax = plt.subplots(l, 1, figsize=(6.4, l * 4.8))
     i = 0
+
+    # Conversion between kilograms and pounds
+    if session["unit"] == "kg":
+        m = 1 / 2.204622621848776
+    else:
+        m = 2.204622621848776
+
     for exercise in session["graph"]:
-        # Get the first day
+        # Get the first day the exercise was done on
         cursor.execute("SELECT day FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (session["user_id"], exercise[1]))
         day1 = cursor.fetchone()
         if day1:
@@ -242,7 +253,11 @@ def make_graphs():
         entries = cursor.fetchall()
         y = []
         for entry in entries:
-            y += [entry[3] * entry[5]]
+            # Account for different units
+            if entry[4] == session["unit"]:
+                y += [entry[3] * entry[5]]
+            else:
+                y += [entry[3] * entry[5] * m]
         cursor.execute("SELECT JULIANDAY(day) - JULIANDAY(?) FROM diary WHERE user_id = ? AND exercise = ? ORDER BY day", (day1, session["user_id"], exercise[1]))
         diffs = cursor.fetchall()
         x = [int(j[0]) for j in diffs]

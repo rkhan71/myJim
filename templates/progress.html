@@ -6,6 +6,22 @@
     <div class="container mb-3">
         <h3>Progress Graphs</h3>
     </div>
+    <div class="container mb-3">
+        <form action="/progress" method="post" id="unit-form">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="unit" id="kg" value="kg">
+                <label class="form-check-label" for="kg">
+                    kg
+                </label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="unit" id="lbs" value="lbs">
+                <label class="form-check-label" for="lbs">
+                    lbs
+                </label>
+            </div>
+        </form>
+    </div>
     <div class="accordion" id="accordionExample">
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingOne">
@@ -35,13 +51,26 @@
     </script>
     {% endfor %}
     {% endif %}
+    {% if session["unit"] == "kg" %}
+    <script>
+        document.getElementById("kg").checked = true
+    </script>
+    {% else %}
+    <script>
+        document.getElementById("lbs").checked = true
+    </script>
+    {% endif %}
     <script>
         let element = document.querySelector("#progress")
         element.classList.add("active")
         element.setAttribute("aria-current", "page")
-        let form = document.getElementById("graph-form")
-        form.addEventListener("change", function onchange() {
-            form.submit();
+        let graph = document.getElementById("graph-form")
+        graph.addEventListener("change", function onchange() {
+            graph.submit();
+        });
+        let unit = document.getElementById("unit-form")
+        unit.addEventListener("change", function uchange() {
+            unit.submit();
         });
     </script>
 {% endblock %}

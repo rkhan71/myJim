@@ -8,18 +8,13 @@
 <div class="container mb-3">
     <form action="/diary" method="get" id="calendar">
         <div class="mb-3">
-            <input type="date" name="date" class="form-control">
+            <input type="date" value="{{ session['date'] }}" name="date" class="form-control">
         </div>
     </form>
 </div>
 
-<!-- Show the selected date -->
-<div class="container py-3">
-    <h3>{{ session["date"] }}</h3>
-</div>
-
 <!-- Forms to update database -->
-<div class="container mb-3">
+<div class="container py-3">
     <h3>Add an Exercise</h3>
 </div>
 <div class="container mb-3">
@@ -30,7 +25,7 @@
         <button type="submit" class="btn btn-primary btn-lg">Add Exercise</button>
     </form>
 </div>
-<div class="container mb-3">
+<div class="container py-3">
     <h3>Delete an Exercise</h3>
 </div>
 <div class="container mb-3">
@@ -47,7 +42,7 @@
         <button type="submit" class="btn btn-primary btn-lg">Delete Exercise</button>
     </form>
 </div>
-<div class="container mb-3">
+<div class="container py-3">
     <h3>Add an Entry</h3>
 </div>
 <div class="container mb-3">
