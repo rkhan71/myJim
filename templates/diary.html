@@ -12,7 +12,6 @@
         </div>
     </form>
 </div>
-
 <!-- Forms to update database -->
 <div class="container py-3">
     <h3>Add an Exercise</h3>
@@ -31,7 +30,7 @@
 <div class="container mb-3">
     <form action="/diary" method="post">
         <div class="mb-3">
-            <select class="form-select" aria-label="Default select example" name="exercise-del">
+            <select class="form-select" name="exercise-del" id="exercise-del">
                 <option selected disabled>--- Choose an Exercise ---</option>
                 <!-- exercises variable passed in from app.py, SQL query for all exercises for current user-->
                 {% for e in exercises %}
@@ -48,7 +47,7 @@
 <div class="container mb-3">
     <form action="/diary" method="post">
         <div class="mb-3">
-            <select class="form-select" aria-label="Default select example" name="exercise-select">
+            <select class="form-select" name="exercise-select">
                 <option selected disabled>--- Choose an Exercise ---</option>
                 {% for e in exercises %}
                 <option value="{{ e[1] }}">{{ e[1] }}</option>
@@ -107,15 +106,21 @@
     </table>
 </div>
 
-<!-- Some javascript to add classes and attributes to elements in the navbar in layout.html so that the user can see 
-    the page they are on -->
 <script>
+    /* Add classes and attributes to elements in navbar in layout.html so user can see the page they are on */
     let element = document.querySelector("#diary")
     element.classList.add("active")
     element.setAttribute("aria-current", "page")
     let form = document.getElementById("calendar")
     form.addEventListener("change", function onchange() {
         form.submit();
+    });
+
+    /* Search box for select menus */
+    $(document).ready(function() {
+        $(".form-select").select2({
+            theme: "bootstrap-5"
+        });
     });
 </script>
 {% endblock %}
