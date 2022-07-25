@@ -107,14 +107,14 @@
 </div>
 
 <script>
-    /* Add classes and attributes to elements in navbar in layout.html so user can see the page they are on */
-    let element = document.querySelector("#diary")
-    element.classList.add("active")
-    element.setAttribute("aria-current", "page")
+    /* Make calendar form submit without submit button */
     let form = document.getElementById("calendar")
     form.addEventListener("change", function onchange() {
         form.submit();
     });
+
+    /* Show user what page they're on with dark links on navbar */
+    document.getElementById("diary").classList.add("link-dark")
 
     /* Search box for select menus */
     $(document).ready(function() {

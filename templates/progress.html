@@ -43,6 +43,8 @@
             </div>
         </div>
     </div>
+    
+    <!-- Show chosen graphs and keep the checkboxes of chosen graphs checked -->
     {% if session["graph"] %}
     <img src="/graph.png">
     {% for ch in session["graph"] %}
@@ -51,6 +53,8 @@
     </script>
     {% endfor %}
     {% endif %}
+
+    <!-- Keep correct radio button checked for unit user has chosen -->
     {% if session["unit"] == "kg" %}
     <script>
         document.getElementById("kg").checked = true
@@ -61,9 +65,9 @@
     </script>
     {% endif %}
     <script>
-        let element = document.querySelector("#progress")
-        element.classList.add("active")
-        element.setAttribute("aria-current", "page")
+        document.getElementById("progress").classList.add("link-dark")
+
+        /* submit unit and graphs to show without submit button */
         let graph = document.getElementById("graph-form")
         graph.addEventListener("change", function onchange() {
             graph.submit();

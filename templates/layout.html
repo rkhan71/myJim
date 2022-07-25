@@ -30,27 +30,27 @@ and doesn't have to be copy pasted -->
                 {% if session["user_id"] %}
                   <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                      <a class="nav-link" href="/" id="home">Home</a>
+                      <a class="nav-link link-secondary" href="/" id="home">Home</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="/diary" id="diary">Diary</a>
+                      <a class="nav-link link-secondary" href="/diary" id="diary">Diary</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="/progress" id="progress">Progress</a>
+                      <a class="nav-link link-secondary" href="/progress" id="progress">Progress</a>
                     </li>
                   </ul>
                   <ul class="navbar-nav ms-auto">
                       <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/logout">Logout</a>
+                        <a class="nav-link" href="/logout">Logout</a>
                       </li>
                   </ul>
                 {% else %}
                   <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                      <a class="nav-link" href="/register" id="register">Register</a>
+                      <a class="nav-link link-secondary" href="/register" id="register">Register</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="/login" id="login">Login</a>
+                      <a class="nav-link link-secondary" href="/login" id="login">Login</a>
                     </li>
                   </ul>
                 {% endif %}

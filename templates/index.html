@@ -3,8 +3,6 @@
 {% block body %} 
     <p>Welcome to homepage bwana! All you can do is register, login, and logout for now. Enjoy!</p>
     <script>
-        let element = document.querySelector("#home")
-        element.classList.add("active")
-        element.setAttribute("aria-current", "page")
+        document.getElementById("home").classList.add("link-dark")
     </script>
 {% endblock %}
