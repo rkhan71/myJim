@@ -4,12 +4,16 @@
 {% block title %}: Diary{% endblock %}
 
 {% block body %}
-<!-- Form to change session["date"] using get method-->
+<!-- Forms to change session["date"] using get method-->
 <div class="container mb-3">
     <form action="/diary" method="get" id="calendar">
         <div class="mb-3">
             <input type="date" value="{{ session['date'] }}" name="date" class="form-control">
         </div>
+    </form>
+    <form action="/diary" method="post">
+        <button type="submit" name="arrow" class="btn btn-primary" value="back"><</button>
+        <button type="submit" name="arrow" class="btn btn-primary" value="forward">></button>
     </form>
 </div>
 <!-- Forms to update database -->
@@ -104,7 +108,7 @@
             {% endfor %}
         </tbody>
     </table>
-</div>
+</div> 
 
 <script>
     /* Make calendar form submit without submit button */

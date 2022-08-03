@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, request, session, Response
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
-from datetime import date
+from datetime import date, timedelta
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import matplotlib
 matplotlib.use('Agg')
@@ -167,6 +167,14 @@ def diary():
             cursor.execute("DELETE FROM exercise_list WHERE exercise = ?", (request.form.get("exercise-del"),))
             cursor.execute("SELECT * FROM exercise_list WHERE user_id = ?", (session["user_id"],))
             exercises = cursor.fetchall()
+        elif request.form.get("arrow") == "forward":
+            # Button to increase date
+            ints = [int(i) for i in session["date"].split("-")]
+            session["date"] = (date(ints[0], ints[1], ints[2]) + timedelta(days=1)).strftime("%Y-%m-%d")
+        elif request.form.get("arrow") == "back":
+            # Button to increase date
+            ints = [int(i) for i in session["date"].split("-")]
+            session["date"] = (date(ints[0], ints[1], ints[2]) - timedelta(days=1)).strftime("%Y-%m-%d")
         else:
             # If you get here it means that a field in the form you submitted was not filled out
             connect.close()
@@ -179,8 +187,8 @@ def diary():
 
         # If the form is submitted the url will be split into two and the date for the session should be changed
         if len(temp) > 1:
-            date = temp[1].split("=")
-            session["date"] = date[1]
+            d = temp[1].split("=")
+            session["date"] = d[1]
 
             # If the date is changed we need to update the diary entries shown on the webpage
             cursor.execute("SELECT * FROM diary WHERE user_id = ? AND day = ?", (session["user_id"], session["date"]))
