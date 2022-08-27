@@ -1,2 +1,8 @@
 # myJim
-Creating a website that allows users to track their progress in the gym using Flask, Python and SQL.
+Creating a web app that allows users to track their progress in the gym using Flask, Python and SQL.
+
+While I was learning to create web apps with Python and Flask, I had the idea to make one which I could use to track my progress for the exercises I did in the gym. I always write down the weight I lift and the number of reps I do for each exercise in my notes app so that when I go to the gym next I can try to do more weight or more reps so that I move forward. I wanted to do this with a database that stores all my previous entries so that I could see my progress over time. 
+
+With myJim, users can make accounts, create exercises for those accounts, and then log the weight and reps they do for an exercise on any particular day. I store all this data in an SQL database so that it can be displayed to the user in different forms. Using this data, I create graphs showing what days a certain combination of weight and reps was done on for each exercise using the matplotlib library in Python. This allows users to see their progress visually. They can also see the weight and reps performed for each exercise day after day in a table.
+
+I have spent a lot of time working on the back end of the web app to make sure that all the features such as registering accounts, logging in and out, adding data to the database, etc. work properly. I still worked a little bit on the front end to make it easy for me to navigate the web app while developing it. I used Bootstrap 5 to help with a lot of this. I would like to improve the front end of the web app to make it look more professional by adding a logo in the navbar, some images to the homepage, arranging the forms nicely, along with a few other things. I also need to add a bit of written content to the web app that explains to users what the web app is and how to use it. 
